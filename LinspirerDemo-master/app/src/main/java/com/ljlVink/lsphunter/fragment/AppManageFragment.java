@@ -3,7 +3,11 @@ package com.ljlVink.lsphunter.fragment;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +26,12 @@ import com.ljlVink.lsphunter.utils.DataUtils;
 import com.ljlVink.lsphunter.utils.Sysutils;
 import com.ljlVink.lsphunter.utils.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,58 +87,45 @@ public class AppManageFragment {
         rc.setOnItemClickListener((adapterView, view, i, l) -> {
             String appName = mItems.get(i).getAppName();
             String pkgname = mItems.get(i).getPackageName();
+            ArrayList<String> actions = new ArrayList<>();
+            actions.add("打开");
+            actions.add("提取apk");
+            actions.add("卸载");
+            boolean canTransferOwner = lspdemopkgname.contains(pkgname);
+            if (canTransferOwner) {
+                actions.add("转移权限");
+            } else if (!pkgname.equals(ctx.getPackageName())) {
+                actions.add("带SN参数启动");
+            }
+            View titleView = View.inflate(ctx, R.layout.dialog_app_actions_title, null);
+            ((ImageView) titleView.findViewById(R.id.iv_dialog_app_icon)).setImageDrawable(Sysutils.getAppIcon(ctx, pkgname));
+            ((TextView) titleView.findViewById(R.id.tv_dialog_app_name)).setText(appName);
+            ((TextView) titleView.findViewById(R.id.tv_dialog_pkg_name)).setText("包名:" + pkgname);
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(ctx)
-                    .setTitle(appName)
-                    .setMessage("包名:" + pkgname + "\n")
-                    .setPositiveButton("打开", (dialog1, which) -> {
-                        dialog1.dismiss();
-                        try {
-                            ctx.startActivity(ctx.getPackageManager().getLaunchIntentForPackage(pkgname));
-                        } catch (Exception e) {
-                            Toast.ShowErr(ctx, "出现错误");
+                    .setCustomTitle(titleView)
+                    .setItems(actions.toArray(new String[0]), (dialog1, which) -> {
+                        if (which == 0) {
+                            try {
+                                ctx.startActivity(ctx.getPackageManager().getLaunchIntentForPackage(pkgname));
+                            } catch (Exception e) {
+                                Toast.ShowErr(ctx, "出现错误");
+                            }
+                        } else if (which == 1) {
+                            extractApk(pkgname, appName);
+                        } else if (which == 2) {
+                            HackMdm.DeviceMDM.unblockApp(pkgname);
+                            Intent intent = new Intent(Intent.ACTION_DELETE);
+                            intent.setData(Uri.parse("package:" + pkgname));
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            ctx.startActivity(intent);
+                        } else {
+                            if (canTransferOwner) {
+                                HackMdm.DeviceMDM.transferOwner(new ComponentName(pkgname, "com.huosoft.wisdomclass.linspirerdemo.AR"));
+                            } else {
+                                startWithSN(pkgname);
+                            }
                         }
                     });
-            builder.setIcon(Sysutils.getAppIcon(ctx, pkgname));
-            builder.setNegativeButton("卸载", (dialog, which) -> {
-                dialog.dismiss();
-                HackMdm.DeviceMDM.unblockApp(pkgname);
-                Intent intent = new Intent(Intent.ACTION_DELETE);
-                intent.setData(Uri.parse("package:" + pkgname));
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                ctx.startActivity(intent);
-            });
-            if (lspdemopkgname.contains(pkgname)) {
-                builder.setNeutralButton("转移权限", (dialog2, which) -> HackMdm.DeviceMDM.transferOwner(new ComponentName(pkgname, "com.huosoft.wisdomclass.linspirerdemo.AR")));
-            } else if (!pkgname.equals(ctx.getPackageName())) {
-                builder.setNeutralButton("带SN参数启动", (dialog2, which) -> {
-                    try {
-                        HackMdm.DeviceMDM.killApplicationProcess(pkgname);
-                        ctx.startActivity(ctx.getPackageManager().getLaunchIntentForPackage(pkgname));
-                        Thread thread = new Thread(() -> {
-                            Looper.prepare();
-                            for (int ii = 1; ii <= 7; ii++) {
-                                try {
-                                    Thread.sleep(500);
-                                } catch (Exception ignore) {
-                                }
-                                String sn = DataUtils.readStringValue(ctx, "SN", HackMdm.DeviceMDM.getSerialCode());
-                                if (sn.equals("null")) {
-                                    Toast.ShowErr(ctx,"未设置SN");
-                                    return;
-                                }
-                                ctx.sendBroadcast(new Intent("com.linspirer.edu.getdevicesn"));
-                                Intent intent8 = new Intent("com.android.laucher3.mdm.obtaindevicesn");
-                                intent8.putExtra("device_sn", sn);
-                                ctx.sendBroadcast(intent8);
-                            }
-                            Looper.loop();
-                        });
-                        thread.start();
-                    } catch (Exception e) {
-                        Toast.ShowErr(ctx, "启动失败");
-                    }
-                });
-            }
             builder.create().show();
 
         });
@@ -145,6 +142,114 @@ public class AppManageFragment {
             return true;
         });
 
+    }
+
+    private void startWithSN(String pkgname) {
+        try {
+            HackMdm.DeviceMDM.killApplicationProcess(pkgname);
+            ctx.startActivity(ctx.getPackageManager().getLaunchIntentForPackage(pkgname));
+            Thread thread = new Thread(() -> {
+                Looper.prepare();
+                for (int ii = 1; ii <= 7; ii++) {
+                    try {
+                        Thread.sleep(500);
+                    } catch (Exception ignore) {
+                    }
+                    String sn = DataUtils.readStringValue(ctx, "SN", HackMdm.DeviceMDM.getSerialCode());
+                    if (sn.equals("null")) {
+                        Toast.ShowErr(ctx, "未设置SN");
+                        return;
+                    }
+                    ctx.sendBroadcast(new Intent("com.linspirer.edu.getdevicesn"));
+                    Intent intent8 = new Intent("com.android.laucher3.mdm.obtaindevicesn");
+                    intent8.putExtra("device_sn", sn);
+                    ctx.sendBroadcast(intent8);
+                }
+                Looper.loop();
+            });
+            thread.start();
+        } catch (Exception e) {
+            Toast.ShowErr(ctx, "启动失败");
+        }
+    }
+
+    private void extractApk(String pkgname, String appName) {
+        Toast.ShowInfo(ctx, "正在提取:" + appName);
+        new Thread(() -> {
+            try {
+                PackageManager pm = ctx.getPackageManager();
+                ApplicationInfo appInfo = pm.getApplicationInfo(pkgname, 0);
+                String version = "";
+                try {
+                    PackageInfo pkgInfo = pm.getPackageInfo(pkgname, 0);
+                    if (pkgInfo.versionName != null) {
+                        version = "_" + pkgInfo.versionName;
+                    }
+                } catch (Exception ignore) {
+                }
+                String baseName = sanitizeFileName(appName) + "_" + pkgname + version;
+                String[] splits = appInfo.splitPublicSourceDirs;
+                File out = extractTo(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "LinspirerHunter"), appInfo, baseName, splits);
+                if (out == null) {
+                    out = extractTo(ctx.getExternalFilesDir("apk"), appInfo, baseName, splits);
+                }
+                if (out == null) {
+                    Toast.ShowErr(ctx, "提取失败:无法写入储存");
+                } else {
+                    String extra = (splits != null && splits.length > 0) ? "(split应用,共提取" + (splits.length + 1) + "个文件)" : "";
+                    Toast.ShowSuccess(ctx, "提取成功" + extra + ":" + out.getAbsolutePath());
+                }
+            } catch (PackageManager.NameNotFoundException e) {
+                Toast.ShowErr(ctx, "提取失败:应用可能已卸载");
+            } catch (Exception e) {
+                Toast.ShowErr(ctx, "提取失败:" + e);
+            }
+        }).start();
+    }
+
+    private File extractTo(File dir, ApplicationInfo appInfo, String baseName, String[] splits) {
+        if (dir == null) {
+            return null;
+        }
+        try {
+            if (!dir.exists() && !dir.mkdirs()) {
+                return null;
+            }
+            if (splits == null || splits.length == 0) {
+                File outFile = new File(dir, baseName + ".apk");
+                copyFile(new File(appInfo.sourceDir), outFile);
+                return outFile;
+            }
+            File outDir = new File(dir, baseName + "_split");
+            if (!outDir.exists() && !outDir.mkdirs()) {
+                return null;
+            }
+            copyFile(new File(appInfo.sourceDir), new File(outDir, "base.apk"));
+            for (String split : splits) {
+                copyFile(new File(split), new File(outDir, new File(split).getName()));
+            }
+            return outDir;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    private void copyFile(File src, File dst) throws IOException {
+        try (InputStream in = new FileInputStream(src);
+             OutputStream out = new FileOutputStream(dst)) {
+            byte[] buf = new byte[1024 * 1024];
+            int len;
+            while ((len = in.read(buf)) != -1) {
+                out.write(buf, 0, len);
+            }
+        }
+    }
+
+    private static String sanitizeFileName(String name) {
+        if (name == null) {
+            return "app";
+        }
+        return name.replaceAll("[\\\\/:*?\"<>|\\s]", "_");
     }
         class AppAdapter extends BaseAdapter {
             @Override
