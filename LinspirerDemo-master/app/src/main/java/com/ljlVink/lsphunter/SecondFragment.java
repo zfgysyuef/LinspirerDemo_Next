@@ -47,7 +47,7 @@ public class SecondFragment extends Fragment {
                 AppManageFragment appManageFragment=new AppManageFragment(view,ctx);
                 appManageFragment.HandleFragment();
                 break;
-            case 10:
+            case 11:
                 view =inflater.inflate(R.layout.activity_settings,container,false);
                 SettingsFragment settings=new SettingsFragment();
                 FragmentManager fm=getChildFragmentManager();
@@ -56,22 +56,22 @@ public class SecondFragment extends Fragment {
                 transaction.commit();
                 break;
 
-            case 12:
+            case 13:
                 view = inflater.inflate(R.layout.activity_webview,container,false);
                 WebviewFragment wbview=new WebviewFragment(view,ctx);
                 wbview.HandleWebView("https://youngtoday.github.io/docs/intro");
                 break;
-            case 13:
+            case 14:
                 view = inflater.inflate(R.layout.activity_webview,container,false);
                 WebviewFragment wbview2=new WebviewFragment(view,ctx);
                 wbview2.HandleWebView("http://tools-vue.zuoyebang.com/static/hy/tools-vue/calculator.html");
                 break;
-            case 15:
+            case 16:
                 view =inflater.inflate(R.layout.activity_linspirer_pwdcalc,container,false);
                 LinspirerPWDFragment linspirerPWDFragment=new LinspirerPWDFragment(view,ctx);
                 linspirerPWDFragment.HandleFragment();
                 break;
-            case 20:
+            case 21:
                 view =inflater.inflate(R.layout.activity_about,container,false);
                 FragmentTransaction transaction1 = getChildFragmentManager().beginTransaction();
                 AboutFragment aboutFragment=new AboutFragment();

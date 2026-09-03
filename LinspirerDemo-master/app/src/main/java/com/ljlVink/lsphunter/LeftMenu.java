@@ -40,6 +40,7 @@ public class LeftMenu extends Fragment {
         mData.add(new MenuItemModel(R.drawable.backtodesktop, "返回桌面"));
         mData.add(new MenuItemModel(R.drawable.installapps, "应用安装"));
         mData.add(new MenuItemModel(R.drawable.appmanage,"应用管理"));
+        mData.add(new MenuItemModel(R.drawable.terminal, "终端选项"));
         mData.add(new MenuItemModel(R.drawable.action_hide, "回领创配置隐藏"));
         mData.add(new MenuItemModel(R.drawable.recycle, "杀进程(长按配置)"));
         mData.add(new MenuItemModel(R.drawable.floatview, "打开悬浮窗"));

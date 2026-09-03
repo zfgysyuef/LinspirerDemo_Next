@@ -521,13 +521,22 @@ public class MainActivity extends BaseActivity {
                 break;
             case 4:
                 Flag=true;
-                showsuperapp();
+                new MaterialAlertDialogBuilder(MainActivity.this)
+                        .setIcon(R.drawable.terminal)
+                        .setTitle("终端选项")
+                        .setMessage("终端功能建设中")
+                        .setPositiveButton("确定", null)
+                        .show();
                 break;
             case 5:
                 Flag=true;
-                HackMdm.DeviceMDM.killApplicationProcess(DataUtils.ReadStringArraylist(getApplicationContext(), "notkillapp"));
+                showsuperapp();
                 break;
             case 6:
+                Flag=true;
+                HackMdm.DeviceMDM.killApplicationProcess(DataUtils.ReadStringArraylist(getApplicationContext(), "notkillapp"));
+                break;
+            case 7:
                 Flag=true;
                 if (EasyFloat.isShow()) {
                     try {
@@ -556,7 +565,7 @@ public class MainActivity extends BaseActivity {
                         }).show();
                 }
                 break;
-            case 7:
+            case 8:
                 Flag=true;
                 final String[] hwitems = new String[]{"设置隐藏", "华为解控(unknown)","禁止蓝牙","允许蓝牙","禁用HMS core(设置'华为账号')","启用HMS core(设置'华为账号')","禁用通知栏菜单","启用通知栏菜单","禁止锁屏工具栏","允许锁屏工具烂","关闭手势导航","开启手势导航","禁用安全模式","启用安全模式","打开华为/荣耀设置搜索(仅限部分系统)"};
                 MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(MainActivity.this);
@@ -704,7 +713,7 @@ public class MainActivity extends BaseActivity {
                 });
                 builder1.create().show();
                 break;
-            case 8:
+            case 9:
                 Flag=true;
                 final String[] lenovoitems = new String[]{"设置导航栏(Lenovo10+)", "设置锁屏密码(Lenovo10+)", "联想设置锁屏密码(仅支持mia)", "白名单临时清空(解除app管控)","允许oem解锁(android12+csdk5)","允许危险权限(指定包名)"};
                 MaterialAlertDialogBuilder builder2 = new MaterialAlertDialogBuilder(MainActivity.this);
@@ -749,7 +758,7 @@ public class MainActivity extends BaseActivity {
                 });
                 builder2.create().show();
                 break;
-            case 9:
+            case 10:
                 Flag=true;
                 final String[] deviceitems = new String[]{"启用adb和开发者(需要激活写设置权限)", "禁用adb和开发者(需要激活写设置权限)", "蓝牙设置", "禁用任务栏", "启用任务栏", "下放任务栏", "恢复出厂(DeviceAdmin)", "Settings suggestions", "设置领创壁纸", "清空领创壁纸", "允许系统App联网", "禁止系统App联网", "设置设备名称","设置第三方桌面","禁止安装app","允许安装app","领创强制登出","打开开发者设置","启用gps(5.04领创)","禁用gps(5.04领创)"};
                 MaterialAlertDialogBuilder builder3 = new MaterialAlertDialogBuilder(MainActivity.this);
@@ -864,11 +873,11 @@ public class MainActivity extends BaseActivity {
                 });
                 builder3.create().show();
                 break;
-            case 11:
+            case 12:
                 Flag=true;
                 startActivity(new Intent(MainActivity.this, activitylauncher.MainActivity.class));
                 break;
-            case 14:
+            case 15:
                 Flag=true;
                 new MaterialAlertDialogBuilder(MainActivity.this)
                         .setIcon(R.drawable.app_settings)
@@ -878,11 +887,11 @@ public class MainActivity extends BaseActivity {
                         .show();
 
                 break;
-            case 16:
+            case 17:
                 Flag=true;
                 new uploadHelper(getApplicationContext()).uplpadfakeapps();
                 break;
-            case 17:
+            case 18:
                 Flag=true;
                 ArrayList<String>apps1=new ArrayList<>();
                 ArrayList<String>saves=new ArrayList<>();
@@ -911,7 +920,7 @@ public class MainActivity extends BaseActivity {
                 });
                 appbuilder.show();
                 break;
-            case 18:
+            case 19:
                 Flag=true;
                 final String[] t11items = new String[]{"禁用面具模块","自定义su指令","打开t11调试界面","打开edxp","重新执行开网脚本","开机自动执行root指令","安装模块"};
                 MaterialAlertDialogBuilder buildert11 = new MaterialAlertDialogBuilder(MainActivity.this);
@@ -969,7 +978,7 @@ public class MainActivity extends BaseActivity {
                 }).show();
                 break;
 
-            case 19:
+            case 20:
                 Flag=true;
                 Intent intent=new Intent(MainActivity.this, adbMainActivity.class);
                 startActivity(intent);
@@ -984,7 +993,7 @@ public class MainActivity extends BaseActivity {
             case 1:
                 startActivity(new Intent(Settings.ACTION_HOME_SETTINGS));
                 break;
-            case 5:
+            case 6:
                 superlist.clear();
                 AlertDialog.Builder superbuilder = new AlertDialog.Builder(MainActivity.this);
                 superbuilder.setTitle("选择免杀进程名单");
@@ -1024,7 +1033,7 @@ public class MainActivity extends BaseActivity {
                 superbuilder.setPositiveButton("确定", (dialog, which) -> DataUtils.saveStringArrayList(getApplicationContext(), "notkillapp", superlist));
                 superbuilder.show();
                 break;
-            case 6:
+            case 7:
                 final String[] items = new String[]{"回领创","开启usb调试"};
                 MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(MainActivity.this);
                 builder.setTitle("悬浮窗选项");
@@ -1036,7 +1045,7 @@ public class MainActivity extends BaseActivity {
                     }
                 }).show();
                 break;
-            case 9:
+            case 10:
                 int orig_mode=DataUtils.readint(MainActivity.this,"OnTestMode",0);
                 if (orig_mode ==0)
                     orig_mode=1;
@@ -1045,7 +1054,7 @@ public class MainActivity extends BaseActivity {
                 DataUtils.saveintvalue(MainActivity.this,"OnTestMode",orig_mode);
                 Toast.ShowInfo(MainActivity.this,"debug mode on!");
                 break;
-            case 16:
+            case 17:
                 startActivity(new Intent(MainActivity.this, linspirer_fakeuploader.class));
                 break;
         }
