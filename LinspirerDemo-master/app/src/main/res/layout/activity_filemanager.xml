@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FF121212"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FF1E1E1E"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+
+        <Button
+            android:id="@+id/btn_fm_up"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:text="↑"
+            android:textColor="#FFCCCCCC"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btn_fm_home"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:text="首页"
+            android:textColor="#FFCCCCCC"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/tv_fm_path"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="start"
+            android:fontFamily="monospace"
+            android:padding="10dp"
+            android:singleLine="true"
+            android:textColor="#FF3FD53F"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/lv_fm_files"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="#FF2A2A2A"
+        android:dividerHeight="1dp" />
+
+    <LinearLayout
+        android:id="@+id/bar_fm_clip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FF1E1E1E"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_fm_clip"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="middle"
+            android:padding="10dp"
+            android:singleLine="true"
+            android:textColor="#FFCCCCCC"
+            android:textSize="13sp" />
+
+        <Button
+            android:id="@+id/btn_fm_paste"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="粘贴到此处"
+            android:textColor="#FF3FD53F"
+            android:textSize="13sp" />
+
+        <Button
+            android:id="@+id/btn_fm_clip_clear"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="44dp"
+            android:text="✕"
+            android:textColor="#FFCCCCCC"
+            android:textSize="14sp" />
+    </LinearLayout>
+</LinearLayout>

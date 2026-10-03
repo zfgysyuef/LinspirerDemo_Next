@@ -1,0 +1,75 @@
+package com.ljlVink.core.hackmdm.v2;
+
+import android.content.ComponentName;
+
+import java.util.ArrayList;
+
+public interface MDMInterface {
+    void first_init();
+    void disableBluetooth();
+    void InstallMagiskModule_t11(String path);
+    void disable_quick_settings(boolean disable);
+    void enableBluetooth();
+    void wash_whitelist();
+    void active_DeviceAdmin();
+    void settings_enable_adb(boolean enable);
+    void hw_hidesettings(String str);
+    int getCurrentMDM();
+    boolean settings_putInt(String name,int val);
+    boolean settings_putString(String name,String val);
+    boolean isDeviceAdminActive();
+    boolean isDeviceOwnerActive();
+    void disable_install(boolean isdisable);
+    boolean isDeviceOwnerActive(String PackageName);
+    void initHack(int opt);
+    void initSecondHack();
+    void disable_factory();
+    void pullDown_app();
+    void disable_gesture(boolean disable);
+    void disable_safemode(boolean disable);
+    void pullUp_app();
+    void enableStatusBar();
+    void disable_keyguard_quick_tools(boolean disable);
+    void disableStatusBar();
+    String  getMDMName();
+    void setDefaultLauncher(ComponentName cn);
+    boolean RootCMD(String cmd);
+    void hack_into_generic_mdm_with_Linspirer();
+    void hack_into_generic_mdm_with_linspirer_miemie();
+    String getSerialCode();
+    String getMacAddr();
+    void sendBackDoorLINS(String code,int active);
+    String getAppWhitelist();
+    void installApp(String Apkpath);
+    void unblockApp(String packageName);
+    void killApplicationProcess(ArrayList<String> notKill);
+    void killApplicationProcess(String packageName);
+    void iceApp(String appName,boolean isIce);
+    void RemoveDeviceOwner_admin();
+    void RestoreFactory_AnyMode();
+    void ForceLogout();
+    void Enable_adb();
+    void RestoreFactory_DeviceAdmin();
+    void backToLSPDesktop();
+    String getVersion();
+    void thirdParty_HideApps(ArrayList<String> HideApp);
+    void transferOwner(ComponentName cn);
+    void classOver();
+    void SetDeviceName(String name);
+    void DisableRecentKey();
+    void setLinspirerDesktopWallpaper(String path);
+    void EnableRecentKey();
+    void AppWhiteList_add(String appName);
+    void clear_whitelist_app_lenovo();
+    void setDevicePassword_lenovo_mia(String password);
+    void enableFirewall(boolean enable);
+    boolean isEMUI10UnlockedDevice();
+    boolean isEMUI10Device();
+    void blockUninstall(ArrayList<String> NotAddtoListForUninstall);
+    String miahash_lenovo();
+    boolean HasAbilityCSDK_new();
+    void csdk5_bypassOemlock();
+    void csdk5_enableDangerousPermissions(String pkgname);
+    void enablegps(boolean enable);
+
+}

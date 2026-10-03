@@ -106,6 +106,8 @@ dependencies {
     implementation 'com.github.getActivity:XXPermissions:18.2'
     implementation 'com.github.GrenderG:Toasty:1.5.2'
     implementation 'com.google.android.material:material:1.6.1'
+    implementation 'com.github.termux.termux-app:terminal-view:v0.118.0'
+    implementation 'com.github.termux.termux-app:terminal-emulator:v0.118.0'
     implementation 'com.github.xuexiangjys.XUtil:xutil-core:2.0.0'
     implementation 'com.github.xuexiangjys.XUtil:xutil-sub:2.0.0'
 

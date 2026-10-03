@@ -21,8 +21,8 @@ import java.util.Locale;
 public class LinspirerPWDFragment {
     View view;
     Context ctx;
-    String key500 = "1191ADF1-8489-D8DA-5E9B-755A8B674394-485SDEWQ-QWYHK586";
-    String key501 = "40E06F51-30D0-D6AD-7F7D-008AD0ADC570";
+    static String key500 = "1191ADF1-8489-D8DA-5E9B-755A8B674394-485SDEWQ-QWYHK586";
+    static String key501 = "40E06F51-30D0-D6AD-7F7D-008AD0ADC570";
 
     public LinspirerPWDFragment(View view,Context ctx){
         this.view=view;
@@ -39,7 +39,7 @@ public class LinspirerPWDFragment {
             String pass500 = calc(swdid,key500,userid);
             String pass501 = calc(swdid,key501,userid);
             TextView tvs = (TextView) view.getRootView().findViewById(R.id.tv);
-            tvs.setText("5.0.***:"+pass500+"\n5.01.***:"+pass501+"\n孩子端(5.05):"+hzd(swdid));
+            tvs.setText("5.0.***:"+pass500+"\n5.01.***:"+pass501+"\n孩子端(5.05):"+hzd(swdid)+"\n6.10.***(新):"+calc610(swdid,userid));
             JSONObject jsonObject=new JSONObject();
             jsonObject.put("id","1");
             jsonObject.put("!version","1");
@@ -83,6 +83,29 @@ public class LinspirerPWDFragment {
             return m3758c(b.substring(b.length() - 8, b.length()));
         }
         return "";
+    }
+
+    /**
+     * 领创6.10+工作区紧急密码(com.huawei.hem.u4.H()的移植):
+     * 设备号trim+转小写,seed=yyyyMMdd+设备号+MAGIC+student_id(即userid),
+     * MD5后取末8位hex转十进制,超8位保留末8位,最终取前6位
+     */
+    public static String calc610(String str, String userid) {
+        String identifier = str == null ? "" : str.trim().toLowerCase(Locale.ROOT);
+        if (identifier.isEmpty() || identifier.equals("unknown")) {
+            return "unknown";
+        }
+        String student = userid == null ? "" : userid;
+        String md5 = m3759b(new SimpleDateFormat("yyyyMMdd").format(new Date())
+                + identifier + key501 + student);
+        if (md5.length() < 8) {
+            return "unknown";
+        }
+        String decimal = String.valueOf(Long.parseLong(md5.substring(md5.length() - 8), 16));
+        if (decimal.length() > 8) {
+            decimal = decimal.substring(decimal.length() - 8);
+        }
+        return decimal.length() >= 6 ? decimal.substring(0, 6) : "unknown";
     }
     public String hzd(String str) {
         String format = new SimpleDateFormat("yyyyMMddHH").format(new Date());

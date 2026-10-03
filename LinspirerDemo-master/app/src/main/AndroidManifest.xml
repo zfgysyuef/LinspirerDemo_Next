@@ -239,6 +239,19 @@
                 android:resource="@xml/provider_paths" />
         </provider>
         <activity
+            android:name="com.ljlVink.lsphunter.Activity.TerminalActivity"
+            android:exported="false"
+            android:label="终端模拟器"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.LinspirerDemo.NoActionBar"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="com.ljlVink.lsphunter.Activity.FileManagerActivity"
+            android:exported="false"
+            android:label="文件管理"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.LinspirerDemo.NoActionBar" />
+        <activity
             android:name="com.ljlVink.lsphunter.Activity.linspirer_fakeuploader"
             android:excludeFromRecents="true"
             android:exported="false"

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FF000000"
+    android:orientation="vertical">
+
+    <com.termux.view.TerminalView
+        android:id="@+id/term_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:focusable="true"
+        android:focusableInTouchMode="true" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FF1E1E1E"
+        android:orientation="horizontal"
+        android:padding="4dp">
+
+        <Button
+            android:id="@+id/btn_key_esc"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="ESC"
+            android:textColor="#FFCCCCCC"
+            android:textSize="13sp" />
+
+        <Button
+            android:id="@+id/btn_key_tab"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="TAB"
+            android:textColor="#FFCCCCCC"
+            android:textSize="13sp" />
+
+        <Button
+            android:id="@+id/btn_key_ctrl"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="CTRL"
+            android:textColor="#FFCCCCCC"
+            android:textSize="13sp" />
+
+        <Button
+            android:id="@+id/btn_key_up"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="↑"
+            android:textColor="#FFCCCCCC"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/btn_key_down"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="↓"
+            android:textColor="#FFCCCCCC"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/btn_key_clear"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="清屏"
+            android:textColor="#FFCCCCCC"
+            android:textSize="13sp" />
+    </LinearLayout>
+</LinearLayout>
