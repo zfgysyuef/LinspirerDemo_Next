@@ -2,22 +2,47 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory
-        android:title="领创阻止联网设置">
+        android:title="领创 VPN 网络设置">
         <SwitchPreference
             android:defaultValue="true"
             android:key="appstore_internet"
-            android:title="阻止应用商店联网"
-            android:summary="阻止应用商店联网(如更新管控等)"
+            android:title="应用商店也使用 VPN"
+            android:summary="阻断模式下断网；自定义模式下通过本地代理连接"
             />
         <SwitchPreference
             android:defaultValue="false"
             android:key="vpnmode"
-            android:title="开启状态"
-            android:summary="开启后,领创桌面将无法联网"/>
+            android:title="启用 VPN 功能"
+            android:summary="按下面选择的模式处理领创桌面网络"/>
+        <ListPreference
+            android:defaultValue="block"
+            android:entries="@array/vpn_behavior_entries"
+            android:entryValues="@array/vpn_behavior_values"
+            android:key="vpn_behavior"
+            android:title="VPN 工作模式"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            android:defaultValue="10.0.2.2"
+            android:key="mdm_server_host"
+            android:title="自定义 MDM 服务器"
+            android:dialogTitle="输入服务器域名或 IP"
+            android:summary="代理模式下 cloud.linspirer.com:883 的实际上游地址"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            android:defaultValue="883"
+            android:inputType="number"
+            android:key="mdm_server_port"
+            android:title="自定义 MDM 端口"
+            app:useSimpleSummaryProvider="true" />
+        <Preference
+            android:key="mdm_tls_help"
+            android:selectable="false"
+            android:title="HTTPS 证书要求"
+            android:summary="代理保持原 TLS 主机名；私人服务器须提供设备信任且适用于 cloud.linspirer.com 的证书" />
         <Preference
             android:key="vpn_stop"
             android:title="临时关闭"
-            android:summary="临时关闭后,领创桌面将有联网的机会"/>
+            android:summary="停止当前 VPN；下次启动程序时会按保存的设置恢复"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:title="隐藏程序设置">

@@ -1,14 +1,18 @@
 package com.ljlVink.lsphunter.fragment;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.VpnService;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.EditText;
 
 import androidx.preference.EditTextPreference;
+import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
@@ -16,6 +20,7 @@ import androidx.preference.SwitchPreference;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.huosoft.wisdomclass.linspirerdemo.R;
+import com.ljlVink.lsphunter.services.MdmProxyServer;
 import com.ljlVink.lsphunter.services.vpnService;
 import com.ljlVink.lsphunter.utils.DataUtils;
 import com.ljlVink.lsphunter.utils.Sysutils;
@@ -25,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
+    private static final int VPN_REQUEST_CODE = 667;
     private SharedPreferences prefs;
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -50,9 +56,23 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         SwitchPreference firewall_ctrl=Objects.requireNonNull(findPreference("firewall_ctrl"));
         SwitchPreference bjsz_mode_disable_recent=Objects.requireNonNull(findPreference("bjsz_mode_disable_recent"));
         SwitchPreference pulldown_app_until_volume_press=Objects.requireNonNull(findPreference("pulldown_app_until_volume_press"));
+        ListPreference vpnBehavior=Objects.requireNonNull(findPreference(vpnService.KEY_MODE));
+        EditTextPreference mdmServerHost=Objects.requireNonNull(findPreference(vpnService.KEY_MDM_HOST));
+        EditTextPreference mdmServerPort=Objects.requireNonNull(findPreference(vpnService.KEY_MDM_PORT));
+
+        vpnmode.setChecked(DataUtils.readint(getContext(), "vpnmode") == 1);
+        appstore_internet.setChecked(DataUtils.readint(getContext(), "disallow_appstore_internet", 1) == 1);
+        vpnBehavior.setValue(DataUtils.readStringValue(
+                getContext(), vpnService.KEY_MODE, vpnService.MODE_BLOCK));
+        mdmServerHost.setText(DataUtils.readStringValue(
+                getContext(), vpnService.KEY_MDM_HOST, vpnService.DEFAULT_MDM_HOST));
+        mdmServerPort.setText(String.valueOf(DataUtils.readint(
+                getContext(), vpnService.KEY_MDM_PORT, vpnService.DEFAULT_MDM_PORT)));
+
         vpnmode.setOnPreferenceChangeListener((preference, newValue) -> {
             if((Boolean) newValue){
                 DataUtils.saveintvalue(getContext(),"vpnmode",1);
+                startVpnWithPermission();
             }else{
                 DataUtils.saveintvalue(getContext(),"vpnmode",0);
                 vpnService.stop(getContext());
@@ -68,10 +88,43 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     DataUtils.saveintvalue(getContext(),"disallow_appstore_internet",0);
 
                 }
+                reloadVpnIfEnabled();
                 return true;
             }
-            public void reload(){
-                vpnService.reload("",getContext());
+        });
+        vpnBehavior.setOnPreferenceChangeListener((preference, newValue) -> {
+            String mode = String.valueOf(newValue);
+            if (!vpnService.MODE_BLOCK.equals(mode) && !vpnService.MODE_CUSTOM_MDM.equals(mode)) {
+                return false;
+            }
+            if (vpnService.MODE_CUSTOM_MDM.equals(mode)
+                    && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                Toast.ShowErr(getContext(), "自定义 MDM 模式需要 Android 10 或更高版本");
+                return false;
+            }
+            DataUtils.saveStringValue(getContext(), vpnService.KEY_MODE, mode);
+            reloadVpnIfEnabled();
+            return true;
+        });
+        mdmServerHost.setOnPreferenceChangeListener((preference, newValue) -> {
+            String host = MdmProxyServer.normalizeHost(String.valueOf(newValue));
+            if (host.isEmpty()) {
+                Toast.ShowErr(getContext(), "服务器地址无效");
+                return false;
+            }
+            DataUtils.saveStringValue(getContext(), vpnService.KEY_MDM_HOST, host);
+            reloadVpnIfEnabled();
+            return true;
+        });
+        mdmServerPort.setOnPreferenceChangeListener((preference, newValue) -> {
+            try {
+                int port = MdmProxyServer.validatePort(Integer.parseInt(String.valueOf(newValue)));
+                DataUtils.saveintvalue(getContext(), vpnService.KEY_MDM_PORT, port);
+                reloadVpnIfEnabled();
+                return true;
+            } catch (IllegalArgumentException error) {
+                Toast.ShowErr(getContext(), error.getMessage());
+                return false;
             }
         });
         vpn_stop.setOnPreferenceClickListener(preference -> {
@@ -222,6 +275,39 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             }
             return true;
         });
+    }
+
+    private void reloadVpnIfEnabled() {
+        if (DataUtils.readint(requireContext(), "vpnmode") == 1
+                && VpnService.prepare(requireContext()) == null) {
+            vpnService.reload("", requireContext());
+        }
+    }
+
+    private void startVpnWithPermission() {
+        Intent prepare = VpnService.prepare(requireContext());
+        if (prepare == null) {
+            vpnService.start(requireContext());
+        } else {
+            startActivityForResult(prepare, VPN_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == VPN_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                vpnService.start(requireContext());
+            } else {
+                DataUtils.saveintvalue(requireContext(), "vpnmode", 0);
+                SwitchPreference vpnModePreference = findPreference("vpnmode");
+                if (vpnModePreference != null) {
+                    vpnModePreference.setChecked(false);
+                }
+                Toast.ShowWarn(requireContext(), "未授予 VPN 权限");
+            }
+        }
     }
 
 }

@@ -36,6 +36,12 @@
 
 3. 为6.*版本添加支持(未完全完成)
 
+4. VPN 新增自定义 MDM 服务器模式：将 `cloud.linspirer.com:883` 的 CONNECT 隧道转发到设置的服务器；其余代理连接保持直通。配置修改后会自动重载，原有阻断联网模式继续保留。
+
+自定义模式要求 Android 10 或更高版本。该代理不解密 TLS，私人服务器需要提供设备信任、且适用于 `cloud.linspirer.com` 的证书；测试设备通常需要把实验 CA 安装为系统 CA。
+
+详细设计、配置步骤和验证命令见 [CUSTOM_MDM_VPN.md](CUSTOM_MDM_VPN.md)。
+
 
 # 停止维护
 
